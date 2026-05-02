@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.env
+.env.local
+.env*.local
+prisma/*.db
+.DS_Store
+*.pem
+npm-debug.log*
+.vercel

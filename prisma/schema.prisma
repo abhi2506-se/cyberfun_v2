@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role { USER ADMIN }
+
+model Contact {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  subject   String
+  message   String        @db.Text
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum ContactStatus { NEW READ REPLIED ARCHIVED }
+
+model Job {
+  id           String        @id @default(cuid())
+  title        String
+  department   String
+  location     String
+  type         JobType
+  experience   String
+  salary       String?
+  description  String        @db.Text
+  requirements String        @db.Text
+  benefits     String?       @db.Text
+  isActive     Boolean       @default(true)
+  applications Application[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+enum JobType { FULL_TIME PART_TIME CONTRACT INTERNSHIP REMOTE }
+
+model Application {
+  id          String            @id @default(cuid())
+  jobId       String
+  job         Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  name        String
+  email       String
+  phone       String?
+  resumeUrl   String
+  coverLetter String?           @db.Text
+  portfolio   String?
+  status      ApplicationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+enum ApplicationStatus { PENDING REVIEWING INTERVIEW OFFER REJECTED WITHDRAWN }
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  category    String
+  client      String?
+  liveUrl     String?
+  githubUrl   String?
+  techStack   String[]
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String    @db.Text
+  content     String    @db.Text
+  tags        String[]
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  bio       String?  @db.Text
+  linkedin  String?
+  twitter   String?
+  github    String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  icon        String
+  features    String[]
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String
+  content   String   @db.Text
+  rating    Int      @default(5)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
